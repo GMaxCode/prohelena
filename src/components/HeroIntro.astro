@@ -1,9 +1,9 @@
 ---
 // src/components/HeroIntro.astro
 // Abertura (toca a cada carregamento da página):
-// 1) fundo creme + bolinha cruzando a tela da direita para a esquerda;
-// 2) bolinha volta da esquerda para a direita "trazendo" a frase: cada palavra aparece
-//    letra por letra e a bolinha toca em cima dela antes de seguir para a próxima;
+// 1) bolinha entra no topo direito e desce em escadinha até a linha de base (3s);
+// 2) volta da esquerda para a direita "trazendo" a frase: cada palavra aparece
+//    letra por letra (rápido) e a bolinha toca em cima dela antes de seguir;
 // 3) a bolinha pousa no fim da frase e vira o ponto final;
 // 4) um carro de F1 passa apagando a frase e a página desce.
 // Respeita prefers-reduced-motion. Botão "Pular abertura" sempre disponível.
@@ -58,7 +58,7 @@ const palavras = frase.split(' ');
 <style>
   .intro {
     position: relative;
-    min-height: calc(100svh - 64px);
+    min-height: calc(100svh);
     display: grid;
     place-items: center;
     padding: 2rem clamp(1rem, 4vw, 3rem);
@@ -158,7 +158,7 @@ const palavras = frase.split(' ');
 
     // ---- bolinha: estado + laço de desenho (squash/stretch pela velocidade, rastro) ----
     const sr = () => stage.getBoundingClientRect();
-    const bola = { x: -999, y: -999, r: 10, sq: 0, vis: false };
+    const bola = { x: -999, y: -999, r: 10, sq: 0, vis: false, lento: false };
     const trilha: { x: number; y: number; rx: number; ry: number; a: number; t: number }[] = [];
     let px = 0, py = 0, pt = 0;
 
@@ -172,7 +172,7 @@ const palavras = frase.split(' ');
         const vel = Math.hypot(dx, dy) / dt;
         let rx = bola.r, ry = bola.r, ang = 0, y = bola.y;
         if (bola.sq > 0) { ry = bola.r * (1 - 0.38 * bola.sq); rx = bola.r * (1 + 0.38 * bola.sq); y = bola.y + bola.r - ry; }
-        else if (vel > 0.05) { const k = 1 + Math.min(vel * 0.28, 0.85); rx = bola.r * k; ry = bola.r / k; ang = Math.atan2(dy, dx); trilha.push({ x: bola.x, y: bola.y, rx, ry, a: ang, t: now }); }
+        else if (vel > 0.05 && !bola.lento) { const k = 1 + Math.min(vel * 0.28, 0.85); rx = bola.r * k; ry = bola.r / k; ang = Math.atan2(dy, dx); trilha.push({ x: bola.x, y: bola.y, rx, ry, a: ang, t: now }); }
         for (const p of trilha) {
           const id = (now - p.t) / 260;
           if (id >= 1) continue;
@@ -241,30 +241,38 @@ const palavras = frase.split(' ');
       const chaoX = dr.left + bola.r - box.left;
       const chaoY = dr.top + bola.r - box.top;
       const r = bola.r;
+      const ESCADA = 90; // altura de cada degrau
       raf = requestAnimationFrame(laco);
 
-      // 1) fundo limpo + bolinha cruzando da direita para a esquerda (com uns quiques)
-      await wait(600);
-      bola.vis = true; bola.x = box.width + r * 3; bola.y = chaoY;
-      await anim(1700, (u) => {
-        bola.x = lerp(box.width + r * 3, -r * 3, ease(u * 0.9 + 0.05));
-        bola.y = chaoY - Math.abs(Math.sin(u * Math.PI * 3)) * fs * 0.45 * (1 - u * 0.5);
+      // 1) bolinha entra no canto superior direito e desce em escadinha (3s)
+      await wait(100);
+      bola.vis = true;
+      bola.x = box.width - r * 2; bola.y = -r * 3;
+      const degraus = Math.max(1, Math.floor((chaoY + r * 3) / ESCADA));
+      await anim(3000, (u) => {
+        const f = ease(u);
+        const d = Math.min(Math.floor(f * degraus), degraus - 1);
+        const p = f * degraus - d;
+        bola.y = lerp(-r * 3, chaoY, (d + ease(p)) / degraus);
+        bola.x = box.width - r * 2 - (p * (box.width + r * 2)) / degraus;
       });
       if (parado) return;
-      await wait(300);
+      await wait(200);
 
       // 2) volta da esquerda para a direita trazendo as palavras
       bola.x = -r * 3; bola.y = chaoY;
+      bola.lento = true; // sem rastro, sem squash — só a bolinha mesmo
       for (const w of palavras) {
         const rc = w.getBoundingClientRect();
         const tx = rc.left + rc.width / 2 - box.left;
         const ty = rc.top - box.top + fs * 0.1 - r; // em cima da palavra
-        const dur = await escrever(w, 110);
-        const salto = wait(Math.max(0, dur - 250)).then(() => saltar(tx, ty, fs * 0.45, 560));
-        await Promise.all([wait(dur), salto]);
+        const dur = escrever(w, 25);
+        const salto = wait(200).then(() => saltar(tx, ty, fs * 0.45, 260));
+        await Promise.all([dur, salto]);
         if (parado) return;
-        await tocar(130);
+        await tocar(50);
       }
+      bola.lento = false;
 
       // 3) pousa no fim da frase e vira o ponto final
       await saltar(chaoX, chaoY, fs * 0.3, 520);
