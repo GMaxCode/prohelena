@@ -4,6 +4,7 @@
 // Texto abaixo é RASCUNHO pra revisão da Helena antes de ir pro ar.
 
 import { linkWhatsApp, site } from './site';
+import { getLink } from './links';
 
 export type VarianteBotao = 'cta-wpp' | 'cta-default' | 'cta-soft' | 'cta-store';
 
@@ -25,8 +26,26 @@ export type Passo = {
   titulo: string;
   descricao: string;
   botoes: Botao[];
-  /** Caixa amarela de atenção (passos 3 e 5–6). */
+  /** Caixa amarela de atenção. */
   destaque?: string;
+};
+
+const wpp = (texto = 'Falar com a Helena no WhatsApp'): Botao => ({
+  texto,
+  href: linkWhatsApp(site.whatsappMensagemPadrao),
+  externo: true,
+  variantes: ['cta-wpp'],
+  ariaLabel: 'Abrir conversa no WhatsApp com a Helena Dantas',
+});
+
+const externo = (id: string, variantes: VarianteBotao[]): Botao => {
+  const l = getLink(id);
+  return {
+    texto: l?.label ?? '',
+    href: l && !l.disabled ? l.url : undefined,
+    externo: true,
+    variantes,
+  };
 };
 
 export const passos: Passo[] = [
@@ -35,101 +54,59 @@ export const passos: Passo[] = [
     titulo: 'Curso teórico no app CNH do Brasil',
     descricao:
       'Baixe o app oficial CNH do Brasil (Serpro) e faça o curso teórico online — totalmente gratuito, no celular. São cerca de 45 horas/aula espalhadas por módulos curtos com prova final.',
-    botoes: [
-      {
-        texto: 'Baixar no Google Play',
-        href: 'https://play.google.com/store/apps/details?id=br.gov.serpro.cnhe&hl=pt_BR',
-        externo: true,
-        variantes: ['cta-store'],
-      },
-      {
-        texto: 'Baixar na App Store',
-        href: 'https://apps.apple.com/br/app/cnh-do-brasil/id1275057217',
-        externo: true,
-        variantes: ['cta-store'],
-      },
-    ],
+    botoes: [externo('cnhBrasil_google', ['cta-store']), externo('cnhBrasil_apple', ['cta-store'])],
   },
   {
     numero: 2,
-    titulo: 'Prova teórica do Detran',
+    titulo: 'Biometria no Poupatempo',
     descricao:
-      'Após concluir o curso, marque a prova teórica no próprio app. São 30 questões de múltipla escolha — precisa acertar pelo menos 21.',
-    botoes: [],
+      'Assim que concluir o curso teórico, agende a coleta biométrica (foto, digitais e assinatura) no Poupatempo.',
+    destaque: 'Leve seu RG e CPF no dia do atendimento.',
+    botoes: [externo('poupatempo_biometria', ['cta-default'])],
   },
   {
     numero: 3,
-    titulo: 'Coleta biométrica + agendamento no Poupatempo',
+    titulo: 'Prova teórica do Detran',
     descricao:
-      'Aprovado na teórica, o Detran chama você para a coleta biométrica (foto, digitais e assinatura). É sempre no Poupatempo da sua cidade.',
-    destaque:
-      'Ninguém te ligou em até 30 dias? Procure o Poupatempo da sua cidade com seu RG e CPF em mãos.',
-    botoes: [],
+      'Com a biometria feita, agende a prova teórica no site do Detran-SP. São 30 questões de múltipla escolha — precisa acertar pelo menos 21.',
+    botoes: [externo('detran_prova_teorica', ['cta-default'])],
   },
   {
     numero: 4,
-    titulo: 'Exame médico + exame toxicológico',
+    titulo: 'Exame psicológico',
     descricao:
-      'Você faz o exame médico (vista, audição, psicotécnico) em clínicas credenciadas. O toxicológico é obrigatório desde 2016 para categorias C, D e E — para CNH B vale conferir se a categoria de destino exige.',
+      'Avaliação psicológica feita em clínica credenciada pelo Detran-SP. É um dos requisitos para liberar as aulas práticas.',
     botoes: [],
   },
   {
     numero: 5,
-    titulo: 'Liberação para aulas práticas',
+    titulo: 'Exame médico',
     descricao:
-      'Depois da aprovação no exame médico, você é liberado para as aulas práticas de direção. Esse é o ponto de virada — e é aqui que a Helena entra.',
-    destaque: 'Parabéns! Você já pode fazer suas aulas práticas.',
-    botoes: [
-      {
-        texto: 'Falar com a Helena no WhatsApp',
-        href: linkWhatsApp(site.whatsappMensagemPadrao),
-        externo: true,
-        variantes: ['cta-wpp'],
-        ariaLabel: 'Abrir conversa no WhatsApp com a Helena Dantas',
-      },
-    ],
+      'Avaliação de vista, audição e saúde geral, também em clínica credenciada. O exame toxicológico só é exigido para as categorias C, D e E — não vale para a CNH B.',
+    botoes: [],
   },
   {
     numero: 6,
     titulo: 'Aulas práticas com a Helena',
     descricao:
-      'Você define quantas aulas quer fazer. O carro é da Helena (com direção dupla), e o ritmo é o seu. As aulas acontecem em Sumaré e região — rua de verdade, trânsito de verdade.',
-    botoes: [
-      {
-        texto: 'Falar com a Helena no WhatsApp',
-        href: linkWhatsApp(site.whatsappMensagemPadrao),
-        externo: true,
-        variantes: ['cta-wpp'],
-        ariaLabel: 'Abrir conversa no WhatsApp com a Helena Dantas',
-      },
-      {
-        texto: 'Pagar taxa da prova prática',
-        href: undefined,
-        variantes: ['cta-default'],
-      },
-    ],
+      'Com os exames aprovados, você está liberado para dirigir. Você define quantas aulas quer fazer. O carro é da Helena (com duplo comando), e o ritmo é o seu — inclusive se você tem medo de dirigir. As aulas acontecem em Sumaré/SP e região: rua de verdade, trânsito de verdade.',
+    destaque: 'Parabéns! Você já pode fazer suas aulas práticas.',
+    botoes: [wpp()],
   },
   {
     numero: 7,
-    titulo: 'Marcar e fazer a prova prática',
+    titulo: 'Prova prática',
     descricao:
-      'Quando você e a Helena acharem que tá na hora, agendamos a prova prática no Detran. Custo de cada exame: R$ 90 (valor sujeito a alteração — confirme no portal do Detran-SP).',
+      'Quando você e a Helena acharem que tá na hora, agendamos a prova prática no Detran. Os valores estão na caixa “Quanto custa”, logo abaixo.',
     destaque:
       'Veículo do aluno (se for usar) precisa atender à Resolução Contran 1020/25. Com a Helena, você dirige o carro dela — sem preocupação.',
-    botoes: [
-      {
-        texto: 'Falar com a Helena no WhatsApp',
-        href: linkWhatsApp(site.whatsappMensagemPadrao),
-        externo: true,
-        variantes: ['cta-wpp'],
-      },
-    ],
+    botoes: [wpp(), externo('detran_taxa_prova', ['cta-default'])],
   },
   {
     numero: 8,
     titulo: 'Aprovação e emissão da CNH',
     descricao:
-      'Aprovado na prática, o Detran emite a sua Permissão para Dirigir (PPD) — válida por 12 meses. Depois desse período, ela vira a CNH definitiva automaticamente.',
+      'Aprovado na prática, o Detran emite a sua Permissão para Dirigir (PPD) — válida por 12 meses. Depois desse período, ela vira a CNH definitiva automaticamente. A emissão da CNH física tem taxa própria.',
     botoes: [],
   },
   {
@@ -137,14 +114,7 @@ export const passos: Passo[] = [
     titulo: 'Acompanhamento opcional na prova',
     descricao:
       'Se você quiser, a Helena te acompanha no dia da prova prática — é só combinar antes pelo WhatsApp. A presença da instrutora não garante aprovação, mas ajuda a entrar mais calmo.',
-    botoes: [
-      {
-        texto: 'Falar com a Helena no WhatsApp',
-        href: linkWhatsApp(site.whatsappMensagemPadrao),
-        externo: true,
-        variantes: ['cta-wpp'],
-      },
-    ],
+    botoes: [wpp()],
   },
 ];
 

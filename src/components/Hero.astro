@@ -6,7 +6,7 @@
 import WppButton from './WppButton.astro';
 import { site, linkWhatsApp } from '../data/site';
 
-const kicker = `${site.cidade}/${site.uf} · CNH do Brasil`;
+const kicker = `${site.cidade}/${site.uf} e região · CNH do Brasil`;
 ---
 
 <section class="hero" aria-labelledby="hero-headline">
@@ -168,11 +168,11 @@ const kicker = `${site.cidade}/${site.uf} · CNH do Brasil`;
     <div class="hero-content">
       <p class="hero-kicker">{kicker}</p>
       <h1 id="hero-headline" class="hero-headline">
-        Aprenda a dirigir em {site.cidade}/{site.uf} com a {site.nome}
+        Aprenda a dirigir em {site.cidade}/{site.uf} e região com a {site.nome}
       </h1>
       <p class="hero-sub">
         <strong>Instrutora autônoma credenciada CNH do Brasil.</strong>
-        Aulas práticas de carro para a sua primeira CNH. Você marca o ritmo; eu te levo até a prova.
+        Aulas práticas de carro para a sua primeira CNH — e também para quem tem medo de dirigir. Você marca o ritmo; eu te acompanho.
       </p>
       <div class="hero-actions">
         <WppButton href={linkWhatsApp(site.whatsappMensagemPadrao)} />

@@ -38,32 +38,23 @@ export const linksOficiais: LinkOficial[] = [
     externo: true,
     verificadoEm: '2026-10-21',
   },
-  // Itens abaixo: URLs a confirmar antes da publicação (links podem mudar sem aviso).
-  // Mantidos com `disabled: true` por padrão até validação.
   {
-    id: 'detran_primeira',
-    label: 'Iniciar processo no Detran-SP',
-    destino: 'Detran-SP — Primeira habilitação',
-    url: 'https://www.detran.sp.gov.br/',
+    id: 'poupatempo_biometria',
+    label: 'Agendar biometria no Poupatempo',
+    destino: 'Poupatempo — Coleta biométrica (primeira habilitação)',
+    url: 'https://www.poupatempo.sp.gov.br/carta/5D26C3F6-A310-46CC-B3CA-488A23A92E5D',
     externo: true,
-    disabled: true,
+    verificadoEm: '2026-10-21',
   },
   {
-    id: 'detran_agendamento',
-    label: 'Agendar coleta biométrica no Poupatempo',
-    destino: 'Poupatempo — Agendamento',
-    url: 'https://www.poupatempo.sp.gov.br/',
+    id: 'detran_prova_teorica',
+    label: 'Agendar prova teórica no Detran-SP',
+    destino: 'Detran-SP — Agendar ou cancelar exame teórico',
+    url: 'https://www.detran.sp.gov.br/detransp/pb/servico/habilitacao/agendar_ou_cancelar_exame_teorico?id=carta_de_servico_agendar_ou_cancelar_exame_teorico',
     externo: true,
-    disabled: true,
+    verificadoEm: '2026-10-21',
   },
-  {
-    id: 'detran_exame_toxicologico',
-    label: 'Onde fazer o exame toxicológico',
-    destino: 'Exame toxicológico — DENATRAN',
-    url: 'https://www.gov.br/denatran/pt-br',
-    externo: true,
-    disabled: true,
-  },
+  // Pendente: URL do pagamento da taxa da prova prática ainda não informada.
   {
     id: 'detran_taxa_prova',
     label: 'Pagar taxa da prova prática',

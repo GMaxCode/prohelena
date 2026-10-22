@@ -1,0 +1,89 @@
+---
+// src/components/Valores.astro
+// Caixa única com todos os valores (provas, exames, taxas). Dados em data/valores.ts.
+import { valores, valoresAviso } from '../data/valores';
+---
+
+<section id="valores" class="valores" aria-labelledby="valores-titulo">
+  <div class="container">
+    <div class="valores-card">
+      <h2 id="valores-titulo" class="valores-titulo">Quanto custa</h2>
+      <p class="valores-intro">Taxas e exames do processo da primeira habilitação em SP.</p>
+
+      <dl class="valores-lista">
+        {
+          valores.map((v) => (
+            <div class="valores-linha">
+              <dt>
+                {v.item}
+                {v.nota && <small class="valores-nota">{v.nota}</small>}
+              </dt>
+              <dd>{v.valor}</dd>
+            </div>
+          ))
+        }
+      </dl>
+
+      <p class="valores-aviso"><small>{valoresAviso}</small></p>
+    </div>
+  </div>
+</section>
+
+<style>
+  .valores {
+    padding: var(--space-8) 0;
+    background: var(--paper);
+  }
+  .valores-card {
+    max-width: 40rem;
+    margin-inline: auto;
+    padding: var(--space-6) var(--space-5);
+    background: #fff;
+    border: 2px solid var(--ink);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-cta);
+  }
+  .valores-titulo {
+    font-family: var(--font-display);
+    font-size: 2.25rem;
+    line-height: 1;
+  }
+  .valores-intro {
+    margin-top: var(--space-2);
+    color: var(--gravel);
+  }
+  .valores-lista {
+    margin-top: var(--space-5);
+  }
+  .valores-linha {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: var(--space-4);
+    padding: var(--space-3) 0;
+    border-bottom: 1px dashed var(--line);
+  }
+  .valores-linha dt {
+    font-weight: 600;
+  }
+  .valores-linha dd {
+    font-family: var(--font-mono);
+    font-weight: 700;
+    white-space: nowrap;
+  }
+  .valores-nota {
+    display: block;
+    margin-top: var(--space-1);
+    font-weight: 400;
+    color: var(--gravel);
+    opacity: 0.8;
+  }
+  .valores-aviso {
+    margin-top: var(--space-5);
+    color: var(--gravel);
+    opacity: 0.85;
+  }
+  @media (min-width: 768px) {
+    .valores-card { padding: var(--space-7); }
+  }
+</style>

@@ -28,25 +28,18 @@ import irmaos from '../assets/photos/irmaos.jpeg';
       <h2 id="quem-titulo">Instrutora autônoma.</h2>
 
       <p>
-        Sou a {site.nome}, instrutora autônoma credenciada de direção em {site.cidade}/{site.uf}.
-        Atendo {site.cidade} e cidades próximas — {site.cidadesIrmasLabel}.
+        Sou a {site.nome}, instrutora autônoma credenciada de direção em {site.cidade}/{site.uf} e região.
       </p>
       <p>
-        Dou aulas para todas as idades: do jovem que vai tirar a primeira CNH ao adulto
-        que recomeçou do zero. Sem pressa, sem aula engessada — o ritmo é o seu.
+        Dou aulas para qualquer pessoa: do jovem que vai tirar a primeira CNH ao adulto
+        que recomeçou do zero — inclusive para quem tem medo de dirigir. Sem pressa,
+        sem aula engessada, sem julgamento: o ritmo é o seu.
       </p>
       <p>
-        O carro é meu, com direção dupla. Você aprende no trânsito real de {site.cidade}
+        O carro é meu, com duplo comando. Você aprende no trânsito real de {site.cidade}
         e região, não em circuito fechado.
       </p>
 
-      <ul class="quem-tags" aria-label="Cidades atendidas">
-        {
-          site.regiao.map((c) => (
-            <li class="quem-tag">{c}</li>
-          ))
-        }
-      </ul>
     </div>
   </div>
 </section>
@@ -83,19 +76,6 @@ import irmaos from '../assets/photos/irmaos.jpeg';
   }
   .quem-texto h2 { margin-bottom: var(--space-4); }
   .quem-texto p { margin-bottom: var(--space-4); }
-  .quem-tags {
-    display: flex;
-    flex-wrap: wrap;
-    gap: var(--space-2);
-    margin-top: var(--space-5);
-  }
-  .quem-tag {
-    font-family: var(--font-mono);
-    font-size: var(--text-sm);
-    padding: var(--space-1) var(--space-3);
-    border: 1.5px solid var(--ink);
-    border-radius: 999px;
-  }
 
   @media (min-width: 768px) {
     .quem-grid {

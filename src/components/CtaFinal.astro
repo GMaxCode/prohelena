@@ -10,10 +10,10 @@ import { site, linkWhatsApp } from '../data/site';
     <h2 id="cta-final-titulo">Bora?</h2>
     <p>
       Se você chegou até aqui, está no caminho. Fale com a {site.nome} pelo WhatsApp —
-      {site.cidade} e região, no horário que combinar.
+      {site.cidade}/{site.uf} e região, no horário que combinar.
     </p>
     <WppButton href={linkWhatsApp()} />
-    <p class="cta-area">Área de atuação: {site.regiao.join(' · ')}</p>
+    <p class="cta-area">Atendimento em {site.cidade}/{site.uf} e região</p>
   </div>
 </section>
 

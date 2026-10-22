@@ -8,10 +8,10 @@ export const site = {
   /** Nome curto (ex.: nav, footer). */
   nomeCurto: 'Helena',
   /** Profissão/título usado em meta description e JSON-LD Person. */
-  titulo: 'Instrutora autônoma de direção em Sumaré/SP',
+  titulo: 'Instrutora autônoma de direção em Sumaré/SP e região',
   /** Descrição padrão da home (≤ 155 chars). */
   descricao:
-    'Aulas práticas de carro para a sua primeira CNH em Sumaré/SP e região. Você marca o ritmo; a Helena te leva até a prova.',
+    'Aulas práticas de carro em Sumaré/SP e região, para a primeira CNH ou para quem tem medo de dirigir. Você marca o ritmo; a Helena te acompanha.',
   /** URL canônica (sem barra final). */
   url: 'https://helenadantas.com.br',
   /** Localidade primária e cidades atendidas. */

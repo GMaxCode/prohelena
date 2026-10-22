@@ -3,6 +3,7 @@
 // Guia dedicado, com índice lateral desktop, mais respiro nos passos.
 import BaseLayout from '../layouts/BaseLayout.astro';
 import Passos from '../components/Passos.astro';
+import Valores from '../components/Valores.astro';
 import CtaFinal from '../components/CtaFinal.astro';
 import { passos, mensagemFinal } from '../data/passos';
 import { site, linkWhatsApp } from '../data/site';
@@ -50,6 +51,7 @@ const description = `Guia completo dos 9 passos da primeira CNH em SP — desde 
 
     <div class="guia-conteudo">
       <Passos />
+      <Valores />
 
       <section class="guia-fechamento">
         <h2>Pronto!</h2>
@@ -59,7 +61,7 @@ const description = `Guia completo dos 9 passos da primeira CNH em SP — desde 
         </div>
         <p class="guia-aviso-final">
           <small>
-            Os preços (exames R$ 90 cada, valores sujeitos a alteração) e procedimentos podem mudar sem aviso.
+            Valores e procedimentos podem mudar sem aviso.
             Confirme sempre no portal oficial do Detran-SP.
           </small>
         </p>
