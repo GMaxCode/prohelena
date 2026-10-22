@@ -1,0 +1,263 @@
+---
+// src/components/HeroIntro.astro
+// Abertura animada: bolinha (squash & stretch + rastro) vira o ponto final da frase,
+// um carro de F1 passa apagando o texto e a página desce para o hero.
+// - Toca 1x por sessão (sessionStorage). Respeita prefers-reduced-motion.
+// - Botão "Pular abertura" sempre disponível. Sem JS: frase fica visível e estática.
+const frase = 'Vem fazer aula com a pro Helena';
+---
+
+<script is:inline>
+  try {
+    if (sessionStorage.getItem('intro-visto') || matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      document.documentElement.classList.add('intro-off');
+    }
+  } catch (e) {}
+</script>
+
+<section class="intro" data-intro aria-label="Abertura">
+  <p class="intro-frase" data-frase>{frase}<span class="intro-dot" data-dot aria-hidden="true"></span></p>
+  <canvas class="intro-canvas" data-canvas aria-hidden="true"></canvas>
+
+  <div class="intro-car" data-car aria-hidden="true">
+    <svg viewBox="0 0 200 60" xmlns="http://www.w3.org/2000/svg" focusable="false">
+      <rect x="4" y="9" width="22" height="5" rx="1.5" fill="#0e0e10" />
+      <rect x="13" y="13" width="3" height="17" fill="#0e0e10" />
+      <path d="M10 38 L42 28 L94 24 L122 17 L152 26 L190 36 L193 43 L10 45 Z" fill="#e63946" />
+      <path d="M98 24 L114 13 L130 15 L128 26 Z" fill="#0e0e10" />
+      <circle cx="113" cy="19" r="7" fill="#f2c14e" />
+      <text x="56" y="39" font-size="9" font-weight="700" fill="#fff" font-family="Arial, sans-serif">HELENA</text>
+      <rect x="172" y="43" width="27" height="4" rx="1.5" fill="#0e0e10" />
+      <g class="roda" style="transform-origin:42px 45px"><circle cx="42" cy="45" r="14" fill="#0e0e10" /><circle cx="42" cy="45" r="6" fill="#cfcfd4" /><rect x="41" y="39" width="2" height="12" fill="#0e0e10" /></g>
+      <g class="roda" style="transform-origin:158px 47px"><circle cx="158" cy="47" r="11" fill="#0e0e10" /><circle cx="158" cy="47" r="5" fill="#cfcfd4" /><rect x="157" y="42" width="2" height="10" fill="#0e0e10" /></g>
+    </svg>
+  </div>
+
+  <button type="button" class="intro-pular" data-skip>Pular abertura ↓</button>
+</section>
+
+<style>
+  .intro {
+    position: relative;
+    min-height: calc(100svh - 5rem);
+    display: grid;
+    place-items: center;
+    padding: var(--space-6, 2rem) clamp(1rem, 4vw, 3rem);
+    background: var(--paper, #f7f3ec);
+    overflow: hidden;
+  }
+  :global(html.intro-off) .intro { display: none; }
+
+  .intro-frase {
+    font-family: var(--font-display);
+    font-size: clamp(3.2rem, 12.5vw, 11rem);
+    line-height: 0.92;
+    text-transform: uppercase;
+    text-align: center;
+    text-wrap: balance;
+    color: var(--ink, #0e0e10);
+    clip-path: inset(0 0 0 var(--erase, 0px));
+  }
+  .intro-dot {
+    display: inline-block;
+    width: 0.26em;
+    height: 0.26em;
+    margin-left: 0.05em;
+    border-radius: 50%;
+    background: #ff8fa3;
+    opacity: 0; /* a bolinha em voo vira este ponto */
+  }
+  .intro-canvas { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; }
+
+  .intro-car { position: absolute; left: 0; top: 0; opacity: 0; will-change: transform; pointer-events: none; }
+  .intro-car svg { display: block; width: 100%; height: auto; overflow: visible; }
+  .intro-car::before { /* linhas de velocidade */
+    content: '';
+    position: absolute; right: 96%; top: 30%; width: 70%; height: 34%;
+    background:
+      linear-gradient(90deg, transparent, rgba(14, 14, 16, 0.28)) 0 0 / 100% 3px no-repeat,
+      linear-gradient(90deg, transparent, rgba(14, 14, 16, 0.2)) 0 50% / 80% 3px no-repeat,
+      linear-gradient(90deg, transparent, rgba(14, 14, 16, 0.28)) 0 100% / 100% 3px no-repeat;
+  }
+  .roda { animation: giro 0.22s linear infinite; }
+  @keyframes giro { to { transform: rotate(360deg); } }
+
+  .intro-pular {
+    position: absolute; left: 50%; bottom: 1.25rem; transform: translateX(-50%);
+    padding: 0.5rem 1rem; font: inherit; font-size: 0.875rem; font-weight: 600;
+    color: var(--ink, #0e0e10); background: transparent;
+    border: 2px solid var(--ink, #0e0e10); border-radius: 999px; cursor: pointer;
+  }
+  .intro-pular:hover { background: var(--ink, #0e0e10); color: var(--paper, #f7f3ec); }
+  .intro-pular:focus-visible { outline: 3px solid var(--taxi, #f2c14e); outline-offset: 2px; }
+</style>
+
+<script>
+  const root = document.documentElement;
+  const stage = document.querySelector<HTMLElement>('[data-intro]');
+
+  if (stage && !root.classList.contains('intro-off')) {
+    const q = <T extends HTMLElement>(s: string) => stage.querySelector<T>(s)!;
+    const frase = q('[data-frase]');
+    const dot = q('[data-dot]');
+    const canvas = q<HTMLCanvasElement>('[data-canvas]');
+    const car = q('[data-car]');
+    const ctx = canvas.getContext('2d')!;
+    let raf = 0;
+    let parado = false;
+    const timers: number[] = [];
+    const wait = (ms: number) => new Promise<void>((r) => timers.push(window.setTimeout(r, ms)));
+    const lerp = (a: number, b: number, u: number) => a + (b - a) * u;
+
+    try { sessionStorage.setItem('intro-visto', '1'); } catch {}
+    root.style.overflow = 'hidden';
+
+    const encerrar = () => {
+      parado = true;
+      cancelAnimationFrame(raf);
+      timers.forEach(clearTimeout);
+      root.style.overflow = '';
+    };
+
+    q('[data-skip]').addEventListener('click', () => {
+      encerrar();
+      stage.style.display = 'none';
+      window.scrollTo({ top: 0, behavior: 'instant' });
+    });
+
+    const descer = () => {
+      encerrar();
+      const next = stage.nextElementSibling as HTMLElement | null;
+      const nav = document.querySelector('header');
+      const top = next ? next.getBoundingClientRect().top + window.scrollY - (nav?.offsetHeight ?? 0) : 0;
+      window.scrollTo({ top, behavior: 'smooth' });
+      window.setTimeout(() => { // remove a abertura sem "pulo" visual
+        stage.style.display = 'none';
+        window.scrollTo({ top: 0, behavior: 'instant' });
+      }, 1100);
+    };
+
+    type Seg = { a: [number, number]; b: [number, number]; h: number; d: number; queda?: boolean };
+
+    function quicar(cx: number, floor: number, r: number, W: number, H: number) {
+      const dpr = Math.min(window.devicePixelRatio || 1, 2);
+      canvas.width = W * dpr; canvas.height = H * dpr;
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+
+      const xs = [0.08, 0.26, 0.5, 0.74, 1].map((f) => cx * f);
+      const alto = Math.min(H * 0.28, 240);
+      const segs: Seg[] = [
+        { a: [xs[0], -r * 3], b: [xs[1], floor], h: 0, d: 650, queda: true },
+        { a: [xs[1], floor], b: [xs[2], floor], h: alto, d: 720 },
+        { a: [xs[2], floor], b: [xs[3], floor], h: alto * 0.6, d: 600 },
+        { a: [xs[3], floor], b: [xs[4], floor], h: alto * 0.3, d: 480 },
+      ];
+      const CONTATO = 120;
+
+      const estado = (t: number) => {
+        let acc = 0;
+        for (const s of segs) {
+          if (t < acc + s.d) {
+            const u = (t - acc) / s.d;
+            const x = lerp(s.a[0], s.b[0], u);
+            const y = s.queda ? lerp(s.a[1], s.b[1], u * u) : lerp(s.a[1], s.b[1], u) - 4 * s.h * u * (1 - u);
+            return { x, y, squash: 0 };
+          }
+          acc += s.d;
+          if (t < acc + CONTATO) return { x: s.b[0], y: floor, squash: Math.sin(((t - acc) / CONTATO) * Math.PI) };
+          acc += CONTATO;
+        }
+        return null;
+      };
+
+      return new Promise<void>((resolve) => {
+        const trilha: { x: number; y: number; rx: number; ry: number; ang: number; t: number }[] = [];
+        let t0 = 0, last = 0, px = 0, py = -999;
+        const frame = (now: number) => {
+          if (parado) return;
+          if (!t0) { t0 = now; last = now; }
+          const t = now - t0;
+          const s = estado(t);
+          ctx.clearRect(0, 0, W, H);
+          if (!s) { resolve(); return; }
+
+          const dt = Math.max(now - last, 1); last = now;
+          let rx = r, ry = r, ang = 0, y = s.y;
+          if (s.squash > 0) { // impacto: achata e alarga
+            ry = r * (1 - 0.38 * s.squash); rx = r * (1 + 0.38 * s.squash); y = s.y + r - ry;
+          } else if (py > -900) { // em voo: estica na direção do movimento
+            const dx = s.x - px, dy = s.y - py;
+            const k = 1 + Math.min((Math.hypot(dx, dy) / dt) * 0.28, 0.85);
+            rx = r * k; ry = r / k; ang = Math.atan2(dy, dx);
+            trilha.push({ x: s.x, y: s.y, rx, ry, ang, t: now });
+          }
+          px = s.x; py = s.y;
+
+          for (const p of trilha) { // rastro que some em ~260ms
+            const idade = (now - p.t) / 260;
+            if (idade >= 1) continue;
+            ctx.fillStyle = `rgba(255,143,163,${0.35 * (1 - idade)})`;
+            ctx.beginPath();
+            ctx.ellipse(p.x, p.y, p.rx * (1 - idade * 0.6), p.ry * (1 - idade * 0.6), p.ang, 0, Math.PI * 2);
+            ctx.fill();
+          }
+          while (trilha.length && now - trilha[0].t > 260) trilha.shift();
+
+          ctx.fillStyle = '#ff8fa3';
+          ctx.beginPath();
+          ctx.ellipse(s.x, y, rx, ry, ang, 0, Math.PI * 2);
+          ctx.fill();
+          raf = requestAnimationFrame(frame);
+        };
+        raf = requestAnimationFrame(frame);
+      });
+    }
+
+    function correr(sr: DOMRect, base: number, fs: number) {
+      const carW = Math.max(230, fs * 2.1);
+      const carH = carW * 0.3;
+      car.style.width = `${carW}px`;
+      car.style.top = `${base - carH * 0.97}px`;
+      car.style.opacity = '1';
+      const dur = 1300;
+      return new Promise<void>((resolve) => {
+        let t0 = 0;
+        const frame = (now: number) => {
+          if (parado) return;
+          if (!t0) t0 = now;
+          const u = Math.min((now - t0) / dur, 1);
+          const x = lerp(-carW, sr.width + 40, Math.pow(u, 2.2)); // acelera até sair
+          car.style.transform = `translate3d(${x}px,0,0) scaleX(${1 + 0.08 * u})`;
+          const fr = frase.getBoundingClientRect();
+          const apagado = Math.min(Math.max(x + carW * 0.05 - (fr.left - sr.left), 0), fr.width);
+          frase.style.setProperty('--erase', `${apagado}px`);
+          if (u < 1) raf = requestAnimationFrame(frame); else resolve();
+        };
+        raf = requestAnimationFrame(frame);
+      });
+    }
+
+    (async () => {
+      await document.fonts.ready;
+      const sr = stage.getBoundingClientRect();
+      const dr = dot.getBoundingClientRect();
+      const r = dr.width / 2;
+      const cx = dr.left + r - sr.left;
+      const floor = dr.top + r - sr.top;
+      const fs = parseFloat(getComputedStyle(frase).fontSize);
+
+      await wait(500);
+      await quicar(cx, floor, r, sr.width, sr.height);
+      if (parado) return;
+      dot.style.opacity = '1';      // a bolinha vira o ponto final
+      ctx.clearRect(0, 0, sr.width, sr.height);
+      await wait(900);
+      await correr(sr, dr.bottom - sr.top, fs);
+      if (parado) return;
+      frase.style.visibility = 'hidden';
+      car.style.opacity = '0';
+      await wait(350);
+      if (!parado) descer();
+    })();
+  }
+</script>

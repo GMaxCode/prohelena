@@ -4,7 +4,9 @@
 // Prova social + Passos + FAQ + CTA final.
 
 import BaseLayout from '../layouts/BaseLayout.astro';
+import HeroIntro from '../components/HeroIntro.astro';
 import Hero from '../components/Hero.astro';
+import Reveal from '../components/Reveal.astro';
 import QuemEhHelena from '../components/QuemEhHelena.astro';
 import ComoFunciona from '../components/ComoFunciona.astro';
 import ProvaSocial from '../components/ProvaSocial.astro';
@@ -19,7 +21,9 @@ const description =
 ---
 
 <BaseLayout title={title} description={description} h1="Aprenda a dirigir em Sumaré/SP e região com a Helena — instrutora autônoma CNH do Brasil">
+  <HeroIntro />
   <Hero />
+  <Reveal />
   <QuemEhHelena />
   <ComoFunciona />
   <ProvaSocial />

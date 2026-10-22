@@ -1,0 +1,22 @@
+---
+// src/components/Reveal.astro
+// Revela os blocos das seções ao rolar (fade + subida). Melhoria progressiva:
+// sem JS ou com prefers-reduced-motion, tudo aparece normalmente.
+---
+
+<style is:global>
+  .rv { opacity: 0; transform: translateY(28px); transition: opacity 0.6s ease, transform 0.6s cubic-bezier(0.2, 0.7, 0.2, 1); transition-delay: var(--rv-d, 0ms); }
+  .rv.rv-in { opacity: 1; transform: none; }
+  @media (prefers-reduced-motion: reduce) { .rv { opacity: 1; transform: none; transition: none; } }
+</style>
+
+<script>
+  if (!matchMedia('(prefers-reduced-motion: reduce)').matches && 'IntersectionObserver' in window) {
+    const alvos = document.querySelectorAll<HTMLElement>('section:not(.intro):not(.hero) > .container > *');
+    const io = new IntersectionObserver(
+      (es) => es.forEach((e) => { if (e.isIntersecting) { e.target.classList.add('rv-in'); io.unobserve(e.target); } }),
+      { threshold: 0.12, rootMargin: '0px 0px -6% 0px' },
+    );
+    alvos.forEach((el, i) => { el.classList.add('rv'); el.style.setProperty('--rv-d', `${(i % 4) * 70}ms`); io.observe(el); });
+  }
+</script>
