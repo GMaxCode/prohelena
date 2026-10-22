@@ -7,8 +7,8 @@
   /* Cores (nomes semânticos, valores do PLANO). */
   --ink: #0e0e10;
   --paper: #f7f3ec;
-  --stop: #c8311e;
-  --taxi: #f2c14e;
+  --stop: #b00000;
+  --taxi: #b00000; /* destaque (laranja/vermelho escolhido pela cliente) */
   --gravel: #1b1b1f;
   --signal: #2c8f4f;
   --line: rgba(27, 27, 31, 0.1);
@@ -39,9 +39,9 @@
   --container-max: 72rem; /* 1152px */
 
   /* Estados & raios. */
-  --radius-sm: 0.25rem;
-  --radius-md: 0.5rem;
-  --radius-lg: 1rem;
+  --radius-sm: 0.5rem;
+  --radius-md: 1rem;
+  --radius-lg: 1.75rem;
 
   /* Transição & sombra. */
   --ease-out: cubic-bezier(0.16, 1, 0.3, 1);

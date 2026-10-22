@@ -1,0 +1,24 @@
+/* src/styles/tema.css
+ * Paleta única do site: preto #0e0e10, creme #f7f3ec, vermelho #b00000, verde do WhatsApp #2c8f4f.
+ * .tema-escuro inverte preto/creme para tudo de "Como funcionam as aulas" para baixo.
+ * Botões: só o do WhatsApp é verde; os demais são pretos com contorno e texto creme.
+ */
+.tema-escuro {
+  --paper: #0e0e10;
+  --ink: #f7f3ec;
+  --gravel: #f7f3ec;
+  --stop: #f7f3ec;
+  --line: rgba(247, 243, 236, 0.18);
+  background: var(--paper);
+  color: var(--ink);
+  margin-bottom: calc(var(--space-9) * -1); /* cola no rodapé preto */
+  padding-bottom: var(--space-9);
+}
+.btn { border-radius: 999px; box-shadow: none; }
+.btn:hover, .btn:active { box-shadow: none; }
+.btn--default, .btn--store, .btn--soft {
+  --btn-bg: #0e0e10;
+  --btn-fg: #f7f3ec;
+  border-color: #f7f3ec;
+}
+.btn--wpp { border-color: transparent; }

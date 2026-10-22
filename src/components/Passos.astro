@@ -102,7 +102,7 @@ const { simple = false } = Astro.props;
     color: var(--gravel);
   }
   .passo-destaque {
-    background: var(--taxi);
+    background: var(--paper);
     color: var(--ink);
     padding: var(--space-4) var(--space-5);
     border-radius: var(--radius-md);
@@ -119,9 +119,10 @@ const { simple = false } = Astro.props;
   .passos-fechamento {
     margin-top: var(--space-8);
     padding: var(--space-7) var(--space-5);
-    background: var(--ink);
-    color: var(--paper);
-    border-radius: var(--radius-md);
+    background: var(--paper);
+    color: var(--ink);
+    border: 2px solid var(--ink);
+    border-radius: var(--radius-lg);
     text-align: center;
   }
   .passos-fechamento-actions {
@@ -132,7 +133,7 @@ const { simple = false } = Astro.props;
   }
   .passos-aviso {
     margin-top: var(--space-5);
-    color: var(--paper);
+    color: var(--ink);
     opacity: 0.7;
   }
 

@@ -1,32 +1,51 @@
 ---
 // src/components/HeroIntro.astro
-// Abertura animada: bolinha (squash & stretch + rastro) vira o ponto final da frase,
-// um carro de F1 passa apagando o texto e a página desce para o hero.
-// - Toca 1x por sessão (sessionStorage). Respeita prefers-reduced-motion.
-// - Botão "Pular abertura" sempre disponível. Sem JS: frase fica visível e estática.
+// Abertura (toca a cada carregamento da página):
+// 1) fundo creme + bolinha cruzando a tela da direita para a esquerda;
+// 2) bolinha volta da esquerda para a direita "trazendo" a frase: cada palavra aparece
+//    letra por letra e a bolinha toca em cima dela antes de seguir para a próxima;
+// 3) a bolinha pousa no fim da frase e vira o ponto final;
+// 4) um carro de F1 passa apagando a frase e a página desce.
+// Respeita prefers-reduced-motion. Botão "Pular abertura" sempre disponível.
 const frase = 'Vem fazer aula com a pro Helena';
+const palavras = frase.split(' ');
 ---
 
 <script is:inline>
   try {
-    if (sessionStorage.getItem('intro-visto') || matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    if (matchMedia('(prefers-reduced-motion: reduce)').matches) {
       document.documentElement.classList.add('intro-off');
+    } else {
+      document.documentElement.classList.add('intro-on');
+      if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
+      window.scrollTo(0, 0);
     }
   } catch (e) {}
 </script>
 
 <section class="intro" data-intro aria-label="Abertura">
-  <p class="intro-frase" data-frase>{frase}<span class="intro-dot" data-dot aria-hidden="true"></span></p>
+  <p class="intro-frase" data-frase aria-label={frase}>
+    {
+      palavras.map((p, i) => (
+        <>
+          <span class="intro-w" data-w aria-hidden="true">
+            {[...p].map((c) => <span class="intro-l">{c}</span>)}
+          </span>
+          {i < palavras.length - 1 ? ' ' : ''}
+        </>
+      ))
+    }<span class="intro-dot" data-dot aria-hidden="true"></span>
+  </p>
   <canvas class="intro-canvas" data-canvas aria-hidden="true"></canvas>
 
   <div class="intro-car" data-car aria-hidden="true">
     <svg viewBox="0 0 200 60" xmlns="http://www.w3.org/2000/svg" focusable="false">
       <rect x="4" y="9" width="22" height="5" rx="1.5" fill="#0e0e10" />
       <rect x="13" y="13" width="3" height="17" fill="#0e0e10" />
-      <path d="M10 38 L42 28 L94 24 L122 17 L152 26 L190 36 L193 43 L10 45 Z" fill="#e63946" />
+      <path d="M10 38 L42 28 L94 24 L122 17 L152 26 L190 36 L193 43 L10 45 Z" fill="#b00000" />
       <path d="M98 24 L114 13 L130 15 L128 26 Z" fill="#0e0e10" />
-      <circle cx="113" cy="19" r="7" fill="#f2c14e" />
-      <text x="56" y="39" font-size="9" font-weight="700" fill="#fff" font-family="Arial, sans-serif">HELENA</text>
+      <circle cx="113" cy="19" r="7" fill="#f7f3ec" />
+      <text x="56" y="39" font-size="9" font-weight="700" fill="#f7f3ec" font-family="Arial, sans-serif">HELENA</text>
       <rect x="172" y="43" width="27" height="4" rx="1.5" fill="#0e0e10" />
       <g class="roda" style="transform-origin:42px 45px"><circle cx="42" cy="45" r="14" fill="#0e0e10" /><circle cx="42" cy="45" r="6" fill="#cfcfd4" /><rect x="41" y="39" width="2" height="12" fill="#0e0e10" /></g>
       <g class="roda" style="transform-origin:158px 47px"><circle cx="158" cy="47" r="11" fill="#0e0e10" /><circle cx="158" cy="47" r="5" fill="#cfcfd4" /><rect x="157" y="42" width="2" height="10" fill="#0e0e10" /></g>
@@ -39,11 +58,11 @@ const frase = 'Vem fazer aula com a pro Helena';
 <style>
   .intro {
     position: relative;
-    min-height: calc(100svh - 5rem);
+    min-height: calc(100svh - 64px);
     display: grid;
     place-items: center;
-    padding: var(--space-6, 2rem) clamp(1rem, 4vw, 3rem);
-    background: var(--paper, #f7f3ec);
+    padding: 2rem clamp(1rem, 4vw, 3rem);
+    background: #f7f3ec;
     overflow: hidden;
   }
   :global(html.intro-off) .intro { display: none; }
@@ -55,16 +74,20 @@ const frase = 'Vem fazer aula com a pro Helena';
     text-transform: uppercase;
     text-align: center;
     text-wrap: balance;
-    color: var(--ink, #0e0e10);
+    color: #0e0e10;
     clip-path: inset(0 0 0 var(--erase, 0px));
   }
+  .intro-w { display: inline-block; white-space: nowrap; } /* palavra nunca quebra no meio */
+  /* Com JS, as letras começam invisíveis e entram uma a uma. Sem JS, tudo aparece. */
+  :global(html.intro-on) .intro-l { opacity: 0; display: inline-block; transform: translateY(0.12em); transition: opacity 120ms linear, transform 200ms var(--ease-out); }
+  :global(html.intro-on) .intro-l.on { opacity: 1; transform: none; }
   .intro-dot {
     display: inline-block;
     width: 0.26em;
     height: 0.26em;
     margin-left: 0.05em;
     border-radius: 50%;
-    background: #ff8fa3;
+    background: #b00000;
     opacity: 0; /* a bolinha em voo vira este ponto */
   }
   .intro-canvas { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; }
@@ -85,39 +108,38 @@ const frase = 'Vem fazer aula com a pro Helena';
   .intro-pular {
     position: absolute; left: 50%; bottom: 1.25rem; transform: translateX(-50%);
     padding: 0.5rem 1rem; font: inherit; font-size: 0.875rem; font-weight: 600;
-    color: var(--ink, #0e0e10); background: transparent;
-    border: 2px solid var(--ink, #0e0e10); border-radius: 999px; cursor: pointer;
+    color: #0e0e10; background: transparent;
+    border: 2px solid #0e0e10; border-radius: 999px; cursor: pointer;
   }
-  .intro-pular:hover { background: var(--ink, #0e0e10); color: var(--paper, #f7f3ec); }
-  .intro-pular:focus-visible { outline: 3px solid var(--taxi, #f2c14e); outline-offset: 2px; }
+  .intro-pular:hover { background: #0e0e10; color: #f7f3ec; }
+  .intro-pular:focus-visible { outline: 3px solid #b00000; outline-offset: 2px; }
 </style>
 
 <script>
   const root = document.documentElement;
   const stage = document.querySelector<HTMLElement>('[data-intro]');
+  const COR = '176,0,0';
 
-  if (stage && !root.classList.contains('intro-off')) {
+  // Voltar/avançar do navegador restaura a página do cache: recarrega para tocar de novo.
+  window.addEventListener('pageshow', (e) => { if (e.persisted) location.reload(); });
+
+  if (stage && root.classList.contains('intro-on')) {
     const q = <T extends HTMLElement>(s: string) => stage.querySelector<T>(s)!;
     const frase = q('[data-frase]');
     const dot = q('[data-dot]');
     const canvas = q<HTMLCanvasElement>('[data-canvas]');
     const car = q('[data-car]');
     const ctx = canvas.getContext('2d')!;
-    let raf = 0;
+    const palavras = Array.from(stage.querySelectorAll<HTMLElement>('[data-w]'));
     let parado = false;
+    let raf = 0;
     const timers: number[] = [];
     const wait = (ms: number) => new Promise<void>((r) => timers.push(window.setTimeout(r, ms)));
     const lerp = (a: number, b: number, u: number) => a + (b - a) * u;
+    const ease = (u: number) => (u < 0.5 ? 2 * u * u : 1 - Math.pow(-2 * u + 2, 2) / 2);
 
-    try { sessionStorage.setItem('intro-visto', '1'); } catch {}
     root.style.overflow = 'hidden';
-
-    const encerrar = () => {
-      parado = true;
-      cancelAnimationFrame(raf);
-      timers.forEach(clearTimeout);
-      root.style.overflow = '';
-    };
+    const encerrar = () => { parado = true; cancelAnimationFrame(raf); timers.forEach(clearTimeout); root.style.overflow = ''; };
 
     q('[data-skip]').addEventListener('click', () => {
       encerrar();
@@ -131,128 +153,128 @@ const frase = 'Vem fazer aula com a pro Helena';
       const nav = document.querySelector('header');
       const top = next ? next.getBoundingClientRect().top + window.scrollY - (nav?.offsetHeight ?? 0) : 0;
       window.scrollTo({ top, behavior: 'smooth' });
-      window.setTimeout(() => { // remove a abertura sem "pulo" visual
-        stage.style.display = 'none';
-        window.scrollTo({ top: 0, behavior: 'instant' });
-      }, 1100);
+      window.setTimeout(() => { stage.style.display = 'none'; window.scrollTo({ top: 0, behavior: 'instant' }); }, 1100);
     };
 
-    type Seg = { a: [number, number]; b: [number, number]; h: number; d: number; queda?: boolean };
+    // ---- bolinha: estado + laço de desenho (squash/stretch pela velocidade, rastro) ----
+    const sr = () => stage.getBoundingClientRect();
+    const bola = { x: -999, y: -999, r: 10, sq: 0, vis: false };
+    const trilha: { x: number; y: number; rx: number; ry: number; a: number; t: number }[] = [];
+    let px = 0, py = 0, pt = 0;
 
-    function quicar(cx: number, floor: number, r: number, W: number, H: number) {
-      const dpr = Math.min(window.devicePixelRatio || 1, 2);
-      canvas.width = W * dpr; canvas.height = H * dpr;
-      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-
-      const xs = [0.08, 0.26, 0.5, 0.74, 1].map((f) => cx * f);
-      const alto = Math.min(H * 0.28, 240);
-      const segs: Seg[] = [
-        { a: [xs[0], -r * 3], b: [xs[1], floor], h: 0, d: 650, queda: true },
-        { a: [xs[1], floor], b: [xs[2], floor], h: alto, d: 720 },
-        { a: [xs[2], floor], b: [xs[3], floor], h: alto * 0.6, d: 600 },
-        { a: [xs[3], floor], b: [xs[4], floor], h: alto * 0.3, d: 480 },
-      ];
-      const CONTATO = 120;
-
-      const estado = (t: number) => {
-        let acc = 0;
-        for (const s of segs) {
-          if (t < acc + s.d) {
-            const u = (t - acc) / s.d;
-            const x = lerp(s.a[0], s.b[0], u);
-            const y = s.queda ? lerp(s.a[1], s.b[1], u * u) : lerp(s.a[1], s.b[1], u) - 4 * s.h * u * (1 - u);
-            return { x, y, squash: 0 };
-          }
-          acc += s.d;
-          if (t < acc + CONTATO) return { x: s.b[0], y: floor, squash: Math.sin(((t - acc) / CONTATO) * Math.PI) };
-          acc += CONTATO;
+    function laco(now: number) {
+      if (parado) return;
+      const { width: W, height: H } = sr();
+      ctx.clearRect(0, 0, W, H);
+      if (bola.vis) {
+        const dt = Math.max(now - pt, 1);
+        const dx = bola.x - px, dy = bola.y - py;
+        const vel = Math.hypot(dx, dy) / dt;
+        let rx = bola.r, ry = bola.r, ang = 0, y = bola.y;
+        if (bola.sq > 0) { ry = bola.r * (1 - 0.38 * bola.sq); rx = bola.r * (1 + 0.38 * bola.sq); y = bola.y + bola.r - ry; }
+        else if (vel > 0.05) { const k = 1 + Math.min(vel * 0.28, 0.85); rx = bola.r * k; ry = bola.r / k; ang = Math.atan2(dy, dx); trilha.push({ x: bola.x, y: bola.y, rx, ry, a: ang, t: now }); }
+        for (const p of trilha) {
+          const id = (now - p.t) / 260;
+          if (id >= 1) continue;
+          ctx.fillStyle = `rgba(${COR},${0.35 * (1 - id)})`;
+          ctx.beginPath(); ctx.ellipse(p.x, p.y, p.rx * (1 - id * 0.6), p.ry * (1 - id * 0.6), p.a, 0, Math.PI * 2); ctx.fill();
         }
-        return null;
-      };
-
-      return new Promise<void>((resolve) => {
-        const trilha: { x: number; y: number; rx: number; ry: number; ang: number; t: number }[] = [];
-        let t0 = 0, last = 0, px = 0, py = -999;
-        const frame = (now: number) => {
-          if (parado) return;
-          if (!t0) { t0 = now; last = now; }
-          const t = now - t0;
-          const s = estado(t);
-          ctx.clearRect(0, 0, W, H);
-          if (!s) { resolve(); return; }
-
-          const dt = Math.max(now - last, 1); last = now;
-          let rx = r, ry = r, ang = 0, y = s.y;
-          if (s.squash > 0) { // impacto: achata e alarga
-            ry = r * (1 - 0.38 * s.squash); rx = r * (1 + 0.38 * s.squash); y = s.y + r - ry;
-          } else if (py > -900) { // em voo: estica na direção do movimento
-            const dx = s.x - px, dy = s.y - py;
-            const k = 1 + Math.min((Math.hypot(dx, dy) / dt) * 0.28, 0.85);
-            rx = r * k; ry = r / k; ang = Math.atan2(dy, dx);
-            trilha.push({ x: s.x, y: s.y, rx, ry, ang, t: now });
-          }
-          px = s.x; py = s.y;
-
-          for (const p of trilha) { // rastro que some em ~260ms
-            const idade = (now - p.t) / 260;
-            if (idade >= 1) continue;
-            ctx.fillStyle = `rgba(255,143,163,${0.35 * (1 - idade)})`;
-            ctx.beginPath();
-            ctx.ellipse(p.x, p.y, p.rx * (1 - idade * 0.6), p.ry * (1 - idade * 0.6), p.ang, 0, Math.PI * 2);
-            ctx.fill();
-          }
-          while (trilha.length && now - trilha[0].t > 260) trilha.shift();
-
-          ctx.fillStyle = '#ff8fa3';
-          ctx.beginPath();
-          ctx.ellipse(s.x, y, rx, ry, ang, 0, Math.PI * 2);
-          ctx.fill();
-          raf = requestAnimationFrame(frame);
-        };
-        raf = requestAnimationFrame(frame);
-      });
+        ctx.fillStyle = `rgb(${COR})`;
+        ctx.beginPath(); ctx.ellipse(bola.x, y, rx, ry, ang, 0, Math.PI * 2); ctx.fill();
+      }
+      while (trilha.length && now - trilha[0].t > 260) trilha.shift();
+      px = bola.x; py = bola.y; pt = now;
+      raf = requestAnimationFrame(laco);
     }
 
-    function correr(sr: DOMRect, base: number, fs: number) {
-      const carW = Math.max(230, fs * 2.1);
-      const carH = carW * 0.3;
-      car.style.width = `${carW}px`;
-      car.style.top = `${base - carH * 0.97}px`;
-      car.style.opacity = '1';
-      const dur = 1300;
-      return new Promise<void>((resolve) => {
+    const anim = (dur: number, f: (u: number) => void) =>
+      new Promise<void>((res) => {
         let t0 = 0;
-        const frame = (now: number) => {
+        const step = (now: number) => {
           if (parado) return;
           if (!t0) t0 = now;
           const u = Math.min((now - t0) / dur, 1);
-          const x = lerp(-carW, sr.width + 40, Math.pow(u, 2.2)); // acelera até sair
-          car.style.transform = `translate3d(${x}px,0,0) scaleX(${1 + 0.08 * u})`;
-          const fr = frase.getBoundingClientRect();
-          const apagado = Math.min(Math.max(x + carW * 0.05 - (fr.left - sr.left), 0), fr.width);
-          frase.style.setProperty('--erase', `${apagado}px`);
-          if (u < 1) raf = requestAnimationFrame(frame); else resolve();
+          f(u);
+          if (u < 1) requestAnimationFrame(step); else res();
         };
-        raf = requestAnimationFrame(frame);
+        requestAnimationFrame(step);
+      });
+
+    const saltar = (x1: number, y1: number, h: number, dur: number) => {
+      const x0 = bola.x, y0 = bola.y;
+      return anim(dur, (u) => { bola.x = lerp(x0, x1, u); bola.y = lerp(y0, y1, u) - 4 * h * u * (1 - u); });
+    };
+    const tocar = (ms: number) => anim(ms, (u) => { bola.sq = Math.sin(u * Math.PI); }).then(() => { bola.sq = 0; });
+
+    // ---- escrita letra por letra ----
+    const escrever = (w: HTMLElement, ms: number) =>
+      new Promise<number>((res) => {
+        const ls = Array.from(w.querySelectorAll<HTMLElement>('.intro-l'));
+        ls.forEach((l, i) => timers.push(window.setTimeout(() => l.classList.add('on'), i * ms)));
+        res(ls.length * ms);
+      });
+
+    function correr(box: DOMRect, base: number, fs: number) {
+      const carW = Math.max(230, fs * 2.1);
+      car.style.width = `${carW}px`;
+      car.style.top = `${base - carW * 0.3 * 0.97}px`;
+      car.style.opacity = '1';
+      return anim(1300, (u) => {
+        const x = lerp(-carW, box.width + 40, Math.pow(u, 2.2));
+        car.style.transform = `translate3d(${x}px,0,0) scaleX(${1 + 0.08 * u})`;
+        const fr = frase.getBoundingClientRect();
+        const apagado = Math.min(Math.max(x + carW * 0.05 - (fr.left - box.left), 0), fr.width);
+        frase.style.setProperty('--erase', `${apagado}px`);
       });
     }
 
     (async () => {
       await document.fonts.ready;
-      const sr = stage.getBoundingClientRect();
-      const dr = dot.getBoundingClientRect();
-      const r = dr.width / 2;
-      const cx = dr.left + r - sr.left;
-      const floor = dr.top + r - sr.top;
-      const fs = parseFloat(getComputedStyle(frase).fontSize);
+      const box = sr();
+      const dpr = Math.min(window.devicePixelRatio || 1, 2);
+      canvas.width = box.width * dpr; canvas.height = box.height * dpr;
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
 
-      await wait(500);
-      await quicar(cx, floor, r, sr.width, sr.height);
+      const dr = dot.getBoundingClientRect();
+      bola.r = dr.width / 2;
+      const fs = parseFloat(getComputedStyle(frase).fontSize);
+      const chaoX = dr.left + bola.r - box.left;
+      const chaoY = dr.top + bola.r - box.top;
+      const r = bola.r;
+      raf = requestAnimationFrame(laco);
+
+      // 1) fundo limpo + bolinha cruzando da direita para a esquerda (com uns quiques)
+      await wait(600);
+      bola.vis = true; bola.x = box.width + r * 3; bola.y = chaoY;
+      await anim(1700, (u) => {
+        bola.x = lerp(box.width + r * 3, -r * 3, ease(u * 0.9 + 0.05));
+        bola.y = chaoY - Math.abs(Math.sin(u * Math.PI * 3)) * fs * 0.45 * (1 - u * 0.5);
+      });
       if (parado) return;
-      dot.style.opacity = '1';      // a bolinha vira o ponto final
-      ctx.clearRect(0, 0, sr.width, sr.height);
+      await wait(300);
+
+      // 2) volta da esquerda para a direita trazendo as palavras
+      bola.x = -r * 3; bola.y = chaoY;
+      for (const w of palavras) {
+        const rc = w.getBoundingClientRect();
+        const tx = rc.left + rc.width / 2 - box.left;
+        const ty = rc.top - box.top + fs * 0.1 - r; // em cima da palavra
+        const dur = await escrever(w, 110);
+        const salto = wait(Math.max(0, dur - 250)).then(() => saltar(tx, ty, fs * 0.45, 560));
+        await Promise.all([wait(dur), salto]);
+        if (parado) return;
+        await tocar(130);
+      }
+
+      // 3) pousa no fim da frase e vira o ponto final
+      await saltar(chaoX, chaoY, fs * 0.3, 520);
+      await tocar(170);
+      dot.style.opacity = '1';
+      bola.vis = false;
       await wait(900);
-      await correr(sr, dr.bottom - sr.top, fs);
+
+      // 4) carro de F1 apaga a frase; a página desce
+      await correr(box, dr.bottom - box.top, fs);
       if (parado) return;
       frase.style.visibility = 'hidden';
       car.style.opacity = '0';
