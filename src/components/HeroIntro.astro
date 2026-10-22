@@ -236,24 +236,13 @@ const palavras = frase.split(' ');
       const ESCADA = 90; // altura de cada degrau
       raf = requestAnimationFrame(laco);
 
-      // 1) bolinha entra no canto superior direito e desce em escadinha (3s)
-      await wait(100);
-      bola.vis = true;
-      bola.x = box.width - r * 2; bola.y = -r * 3;
-      const degraus = Math.max(1, Math.floor((chaoY + r * 3) / ESCADA));
-      await anim(3000, (u) => {
-        const f = ease(u);
-        const d = Math.min(Math.floor(f * degraus), degraus - 1);
-        const p = f * degraus - d;
-        bola.y = lerp(-r * 3, chaoY, (d + ease(p)) / degraus);
-        bola.x = box.width - r * 2 - (p * (box.width + r * 2)) / degraus;
-      });
-      if (parado) return;
-      await wait(200);
+      // 1) fundo creme limpo (sem animação de bolinha)
+      await wait(300);
 
       // 2) volta da esquerda para a direita trazendo as palavras
       bola.x = -r * 3; bola.y = chaoY;
-      bola.lento = true; // sem rastro, sem squash — só a bolinha mesmo
+      bola.vis = true; // bolinha só aparece agora
+      bola.lento = true;
       for (const w of palavras) {
         const rc = w.getBoundingClientRect();
         const tx = rc.left + rc.width / 2 - box.left;
