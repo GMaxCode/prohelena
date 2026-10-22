@@ -3,6 +3,7 @@
  * Só corrige defaults que mais atrapalham layout/typography.
  */
 
+@layer reset {
 *,
 *::before,
 *::after {
@@ -71,4 +72,5 @@ table {
   outline: 3px solid var(--taxi);
   outline-offset: 2px;
   border-radius: var(--radius-sm);
+}
 }

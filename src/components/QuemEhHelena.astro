@@ -13,7 +13,7 @@ import irmaos from '../assets/photos/irmaos.jpeg';
         src={irmaos}
         alt={`${site.nome} e o irmão Adriano — instrutora autônoma credenciada`}
         width={640}
-        height={800}
+        height={640}
         loading="lazy"
         decoding="async"
         widths={[320, 480, 640, 960]}
@@ -58,8 +58,8 @@ import irmaos from '../assets/photos/irmaos.jpeg';
   .quem-foto img {
     width: 100%;
     height: auto;
-    aspect-ratio: 4/5;
-    object-fit: cover;
+    aspect-ratio: 1 / 1;
+    object-fit: contain;
     border-radius: var(--radius-md);
     filter: grayscale(0.06) brightness(0.97);
     transition: filter 250ms var(--ease-out);
