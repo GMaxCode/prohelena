@@ -156,10 +156,9 @@ const palavras = frase.split(' ');
       window.setTimeout(() => { stage.style.display = 'none'; window.scrollTo({ top: 0, behavior: 'instant' }); }, 1100);
     };
 
-    // ---- bolinha: estado + laço de desenho (squash/stretch pela velocidade, rastro) ----
+    // ---- bolinha: estado + laço de desenho (squash/stretch pela velocidade) ----
     const sr = () => stage.getBoundingClientRect();
     const bola = { x: -999, y: -999, r: 10, sq: 0, vis: false, lento: false };
-    const trilha: { x: number; y: number; rx: number; ry: number; a: number; t: number }[] = [];
     let px = 0, py = 0, pt = 0;
 
     function laco(now: number) {
@@ -172,17 +171,10 @@ const palavras = frase.split(' ');
         const vel = Math.hypot(dx, dy) / dt;
         let rx = bola.r, ry = bola.r, ang = 0, y = bola.y;
         if (bola.sq > 0) { ry = bola.r * (1 - 0.38 * bola.sq); rx = bola.r * (1 + 0.38 * bola.sq); y = bola.y + bola.r - ry; }
-        else if (vel > 0.05 && !bola.lento) { const k = 1 + Math.min(vel * 0.28, 0.85); rx = bola.r * k; ry = bola.r / k; ang = Math.atan2(dy, dx); trilha.push({ x: bola.x, y: bola.y, rx, ry, a: ang, t: now }); }
-        for (const p of trilha) {
-          const id = (now - p.t) / 260;
-          if (id >= 1) continue;
-          ctx.fillStyle = `rgba(${COR},${0.35 * (1 - id)})`;
-          ctx.beginPath(); ctx.ellipse(p.x, p.y, p.rx * (1 - id * 0.6), p.ry * (1 - id * 0.6), p.a, 0, Math.PI * 2); ctx.fill();
-        }
+        else if (vel > 0.05) { const k = 1 + Math.min(vel * 0.28, 0.85); rx = bola.r * k; ry = bola.r / k; ang = Math.atan2(dy, dx); }
         ctx.fillStyle = `rgb(${COR})`;
         ctx.beginPath(); ctx.ellipse(bola.x, y, rx, ry, ang, 0, Math.PI * 2); ctx.fill();
       }
-      while (trilha.length && now - trilha[0].t > 260) trilha.shift();
       px = bola.x; py = bola.y; pt = now;
       raf = requestAnimationFrame(laco);
     }
