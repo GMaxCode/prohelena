@@ -52,7 +52,7 @@ const palavras = frase.split(' ');
     </svg>
   </div>
 
-  <button type="button" class="intro-pular" data-skip>Pular abertura ↓</button>
+  <button type="button" class="intro-pular" data-skip onclick="document.documentElement.classList.remove('intro-on'); document.documentElement.classList.add('intro-off'); document.documentElement.style.overflow = ''; window.scrollTo(0, 0);">Pular apresentação ↓</button>
 </section>
 
 <style>
@@ -107,9 +107,10 @@ const palavras = frase.split(' ');
   @keyframes giro { to { transform: rotate(360deg); } }
 
   .intro-pular {
-    position: absolute; left: 50%; bottom: 1.25rem; transform: translateX(-50%);
+    position: fixed; z-index: 100; left: 50%; bottom: calc(1rem + env(safe-area-inset-bottom, 0px)); transform: translateX(-50%);
+    min-height: 44px; width: max-content; max-width: calc(100vw - 2rem);
     padding: 0.5rem 1rem; font: inherit; font-size: 0.875rem; font-weight: 600;
-    color: #0e0e10; background: transparent;
+    color: #0e0e10; background: #f7f3ec;
     border: 2px solid #0e0e10; border-radius: 999px; cursor: pointer;
   }
   .intro-pular:hover { background: #0e0e10; color: #f7f3ec; }

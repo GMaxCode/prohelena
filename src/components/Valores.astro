@@ -25,9 +25,9 @@ import { valores, valoresAviso } from '../data/valores';
       </dl>
 
       <p class="valores-aviso"><small>{valoresAviso}</small></p>
+  <p class="valores-fonte"><a href="https://www.poupatempo.sp.gov.br/carta/391270A7-15C2-4FC2-BE72-38C4D14B4A1C" target="_blank" rel="noopener noreferrer">Consulte os requisitos e as taxas no Poupatempo</a>.</p>
     </div>
   </div>
-  <p class="container"><a href="https://www.poupatempo.sp.gov.br/carta/391270A7-15C2-4FC2-BE72-38C4D14B4A1C" target="_blank" rel="noopener noreferrer">Consulte os requisitos e as taxas no Poupatempo</a>.</p>
 </section>
 
 <style>
@@ -79,6 +79,13 @@ import { valores, valoresAviso } from '../data/valores';
     color: var(--gravel);
     opacity: 0.8;
   }
+  .valores-fonte {
+    max-width: none;
+    margin-top: var(--space-5);
+    text-align: center;
+    font-size: var(--text-sm);
+  }
+  .valores-fonte a { color: inherit; text-decoration: underline; }
   .valores-aviso {
     margin-top: var(--space-5);
     color: var(--gravel);
