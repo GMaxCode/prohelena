@@ -24,7 +24,7 @@ export const site = {
   whatsappLink: 'https://wa.me/5519993188336',
   /** Mensagem pré-pronta do CTA principal do passo 6. */
   whatsappMensagemPadrao:
-    'Olá Helena! Estou no passo 6 do guia de primeira habilitação e gostaria de agendar aulas práticas.',
+    'Olá Helena! Estou no passo 6 do guia de primeira habilitação, podemos conversar ?',
   /** Válido para o estado (aparece em rodapé e disclaimer). */
   validade: 'Válido para o estado de São Paulo',
   /** Email de contato (LGPD). Sem formulário, então é só um mailto. */

@@ -82,7 +82,7 @@ export const passos: Passo[] = [
     numero: 5,
     titulo: 'Exame médico',
     descricao:
-      'Avaliação de vista, audição e saúde geral, também em clínica credenciada. O exame toxicológico só é exigido para as categorias C, D e E — não vale para a CNH B.',
+      'Avaliação da visão, audição e saúde geral, realizada em clínica credenciada. Em São Paulo, o exame toxicológico também é obrigatório para a primeira habilitação nas categorias A e B em processos iniciados a partir de 17/06/2026, além das exigências para as categorias C, D e E',
     botoes: [],
   },
   {

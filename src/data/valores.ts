@@ -19,7 +19,7 @@ export const valores: Valor[] = [
   {
     item: 'Exame toxicológico',
     valor: 'R$ 110 a R$ 180',
-    nota: 'Só para as categorias C, D e E. Não é exigido para a categoria B.',
+    nota: 'Para primeira habilitação é obrigatório para todas as categorias.',
   },
 ];
 
