@@ -5,6 +5,10 @@
 export const site = {
   /** Nome que aparece em títulos, JSON-LD, OG. */
   nome: 'Helena Dantas',
+  /** Data da revisão editorial; alterar manualmente após revisar o conteúdo. */
+  atualizadoEm: '2026-10-22',
+  /** Umami: preencher os dois campos para ativar medição sem cookies. */
+  analytics: { scriptUrl: '', websiteId: '' },
   /** Nome curto (ex.: nav, footer). */
   nomeCurto: 'Helena',
   /** Profissão/título usado em meta description e JSON-LD Person. */

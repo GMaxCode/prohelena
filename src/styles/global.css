@@ -105,7 +105,7 @@
   /* Variantes (WppButton.astro referencia estas classes). */
   .btn--wpp {
     --btn-bg: var(--signal);
-    --btn-fg: var(--paper);
+    --btn-fg: #f7f3ec;
     border-color: var(--ink);
   }
 
@@ -123,7 +123,7 @@
 
   .btn--store {
     --btn-bg: var(--signal);
-    --btn-fg: var(--ink);
+    --btn-fg: #f7f3ec;
     border-color: var(--ink);
   }
 

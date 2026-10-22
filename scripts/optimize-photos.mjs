@@ -15,7 +15,6 @@ const outDir = resolve(root, 'public/photos');
 await mkdir(outDir, { recursive: true });
 
 const tasks = [
-  { name: 'irmaos-poster.jpg', w: 1280, h: 720, fit: 'cover', q: 78 },
   { name: 'og-default.jpg', w: 1200, h: 630, fit: 'cover', q: 82 },
 ];
 

@@ -19,7 +19,7 @@ export const valores: Valor[] = [
   {
     item: 'Exame toxicológico',
     valor: 'R$ 110 a R$ 180',
-    nota: 'Para primeira habilitação é obrigatório para todas as categorias.',
+    nota: 'Primeira habilitação A e B em SP: exigido nos processos iniciados desde 17/06/2026. Consulte o preço no laboratório credenciado.',
   },
 ];
 

@@ -10,7 +10,7 @@
   --stop: #b00000;
   --taxi: #b00000; /* destaque (laranja/vermelho escolhido pela cliente) */
   --gravel: #1b1b1f;
-  --signal: #2c8f4f;
+  --signal: #23743f;
   --line: rgba(27, 27, 31, 0.1);
 
   /* Tipografia (fontes via @fontsource-variable carregadas no BaseLayout). */

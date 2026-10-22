@@ -47,6 +47,7 @@ const className = `btn ${variantClass}`;
 ) : (
   <a
     href={href}
+    data-umami-event={href?.startsWith('https://wa.me/') ? 'whatsapp_click' : undefined}
     class={className}
     aria-label={ariaLabel}
     target={isExternal ? '_blank' : undefined}

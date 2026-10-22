@@ -7,7 +7,7 @@ Site institucional estático da Helena Dantas — instrutora autônoma de direç
 - **[Astro](https://astro.build/)** (SSG)
 - CSS nativo com `@layer`
 - Fontes via `@fontsource-variable` (self-hosted, sem Google Fonts no runtime)
-- Hospedagem prevista: **Cloudflare Pages**
+- Hospedagem prevista: **Vercel**
 
 ## Estrutura
 
@@ -42,6 +42,13 @@ npm run dev       # dev server em http://localhost:4321
 npm run build     # build de produção → ./dist
 npm run preview   # serve o ./dist localmente
 ```
+
+## Revisão e manutenção
+
+Veja `CORRECOES.md` para alterações, fontes oficiais e pendências de negócio.
+Atualize `site.atualizadoEm` somente após revisão editorial. Para ativar Umami,
+preencha os dois campos de `site.analytics`; a política e os eventos já estão preparados.
+O hero usa texto e CTA; a abertura é exibida uma vez por sessão.
 
 ## Planejamento
 

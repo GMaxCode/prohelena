@@ -1,6 +1,6 @@
 ---
 // src/components/HeroIntro.astro
-// Abertura (toca a cada carregamento da página):
+// Abertura (toca apenas na primeira visita da sessão):
 // 1) bolinha entra no topo direito e desce em escadinha até a linha de base (3s);
 // 2) volta da esquerda para a direita "trazendo" a frase: cada palavra aparece
 //    letra por letra (rápido) e a bolinha toca em cima dela antes de seguir;
@@ -13,14 +13,14 @@ const palavras = frase.split(' ');
 
 <script is:inline>
   try {
-    if (matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    if (location.hash || sessionStorage.getItem('helena:intro-seen') || matchMedia('(prefers-reduced-motion: reduce)').matches) {
       document.documentElement.classList.add('intro-off');
     } else {
       document.documentElement.classList.add('intro-on');
-      if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
+      sessionStorage.setItem('helena:intro-seen', '1');
       window.scrollTo(0, 0);
     }
-  } catch (e) {}
+  } catch (e) { document.documentElement.classList.add('intro-off'); }
 </script>
 
 <section class="intro" data-intro aria-label="Abertura">
@@ -59,12 +59,13 @@ const palavras = frase.split(' ');
   .intro {
     position: relative;
     min-height: calc(100svh);
-    display: grid;
+    display: none;
     place-items: center;
     padding: 2rem clamp(1rem, 4vw, 3rem);
     background: #f7f3ec;
     overflow: hidden;
   }
+  :global(html.intro-on) .intro { display: grid; }
   :global(html.intro-off) .intro { display: none; }
 
   .intro-frase {
@@ -120,8 +121,7 @@ const palavras = frase.split(' ');
   const stage = document.querySelector<HTMLElement>('[data-intro]');
   const COR = '176,0,0';
 
-  // Voltar/avançar do navegador restaura a página do cache: recarrega para tocar de novo.
-  window.addEventListener('pageshow', (e) => { if (e.persisted) location.reload(); });
+
 
   if (stage && root.classList.contains('intro-on')) {
     const q = <T extends HTMLElement>(s: string) => stage.querySelector<T>(s)!;
@@ -139,7 +139,12 @@ const palavras = frase.split(' ');
     const ease = (u: number) => (u < 0.5 ? 2 * u * u : 1 - Math.pow(-2 * u + 2, 2) / 2);
 
     root.style.overflow = 'hidden';
-    const encerrar = () => { parado = true; cancelAnimationFrame(raf); timers.forEach(clearTimeout); root.style.overflow = ''; };
+    const encerrar = () => { parado = true; cancelAnimationFrame(raf); timers.forEach(clearTimeout); root.style.overflow = ''; root.classList.remove('intro-on'); root.classList.add('intro-off'); };
+    // Falha de canvas/fontes/animação nunca deve bloquear o conteúdo.
+    timers.push(window.setTimeout(encerrar, 12000));
+    const motion = matchMedia('(prefers-reduced-motion: reduce)');
+    motion.addEventListener('change', (event) => { if (event.matches) encerrar(); });
+    window.addEventListener('pagehide', encerrar, { once: true });
 
     q('[data-skip]').addEventListener('click', () => {
       encerrar();
@@ -149,11 +154,8 @@ const palavras = frase.split(' ');
 
     const descer = () => {
       encerrar();
-      const next = stage.nextElementSibling as HTMLElement | null;
-      const nav = document.querySelector('header');
-      const top = next ? next.getBoundingClientRect().top + window.scrollY - (nav?.offsetHeight ?? 0) : 0;
-      window.scrollTo({ top, behavior: 'smooth' });
-      window.setTimeout(() => { stage.style.display = 'none'; window.scrollTo({ top: 0, behavior: 'instant' }); }, 1100);
+      stage.style.display = 'none';
+      window.scrollTo({ top: 0, behavior: 'instant' });
     };
 
     // ---- bolinha: estado + laço de desenho (squash/stretch pela velocidade) ----

@@ -15,8 +15,8 @@ const description = `Política de Privacidade do site institucional de ${site.no
         <p class="kicker">LGPD</p>
         <h2>Política de Privacidade</h2>
         <p class="ultima-atual">
-          Última atualização: <time datetime={new Date().toISOString().slice(0, 10)}>
-            {new Date().toLocaleDateString('pt-BR')}
+          Última atualização: <time datetime={site.atualizadoEm}>
+            {site.atualizadoEm.split('-').reverse().join('/')}
           </time>.
         </p>
       </header>
@@ -30,7 +30,7 @@ const description = `Política de Privacidade do site institucional de ${site.no
       </section>
 
       <section>
-        <h3>O único dado que trafega: WhatsApp</h3>
+        <h3>Conversas pelo WhatsApp</h3>
         <p>
           Todos os botões "Falar no WhatsApp" abrem a conversa diretamente no aplicativo
           do usuário, no número {site.whatsappFormatado}. A conversa não passa por nós —
@@ -41,7 +41,7 @@ const description = `Política de Privacidade do site institucional de ${site.no
       <section>
         <h3>Hospedagem e logs</h3>
         <p>
-          O site é hospedado em CDN (Cloudflare Pages, em produção). Como qualquer servidor,
+          O site é hospedado em CDN (hospedagem prevista na Vercel). Como qualquer servidor,
           o provedor pode registrar endereço de IP, navegador, referência e carimbo de data/hora
           em logs de acesso, por tempo limitado e para fins de segurança e contagem de tráfego.
           Esses dados não são vendidos nem compartilhados.
@@ -54,6 +54,19 @@ const description = `Política de Privacidade do site institucional de ${site.no
           Para dúvidas, pedidos de acesso, correção ou eliminação de dados tratados por nós,
           fale por e-mail: <a href={`mailto:${site.emailContato}`}>{site.emailContato}</a>.
         </p>
+      </section>
+
+      <section>
+        <h3>Medição de visitas e cliques</h3>
+        {site.analytics.scriptUrl && site.analytics.websiteId ? (
+          <p>Usamos Umami, sem cookies, para contar visitas e cliques nos botões do WhatsApp.
+          São registradas informações técnicas de navegação e o evento de clique. Não enviamos
+          o conteúdo das conversas, nomes ou números dos visitantes. Para exercer seus direitos,
+          use o contato indicado nesta página.</p>
+        ) : (
+          <p>A medição de visitas e cliques por analytics está desativada neste site.</p>
+        )}
+        <p>A abertura animada usa sessionStorage no seu navegador apenas para lembrar que já foi exibida nesta sessão. Essa informação não é enviada ao servidor.</p>
       </section>
 
       <section>

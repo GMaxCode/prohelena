@@ -31,14 +31,14 @@ const {
   title,
   description = site.descricao,
   h1,
-  ogImage = '/og-default.jpg',
+  ogImage = '/photos/og-default.jpg',
   h1Only = false,
 } = Astro.props;
 
 const fullTitle = title.includes(site.nome) ? title : `${title} | ${site.nome}`;
 const canonical = new URL(Astro.url.pathname, Astro.site ?? site.url).toString();
 const ogImageUrl = new URL(ogImage, Astro.site ?? site.url).toString();
-const hoje = new Date().toISOString().slice(0, 10);
+const atualizadoEm = site.atualizadoEm;
 
 // JSON-LD: LocalBusiness + Person (Helena).
 const jsonLd = {
@@ -103,6 +103,10 @@ const jsonLd = {
     <meta name="twitter:description" content={description} />
     <meta name="twitter:image" content={ogImageUrl} />
 
+    {site.analytics.scriptUrl && site.analytics.websiteId && (
+      <script is:inline defer src={site.analytics.scriptUrl} data-website-id={site.analytics.websiteId}></script>
+    )}
+
     {/* JSON-LD */}
     <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
 
@@ -120,7 +124,7 @@ const jsonLd = {
       <div class="container">
         <p>
           © {new Date().getFullYear()} {site.nome}. {site.validade}.
-          Última atualização: <time datetime={hoje}>{hoje}</time>.
+          Última atualização: <time datetime={atualizadoEm}>{atualizadoEm.split('-').reverse().join('/')}</time>.
         </p>
         <p>
           <a href="/politica-de-privacidade">Política de Privacidade</a>

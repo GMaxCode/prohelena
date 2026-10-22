@@ -54,14 +54,13 @@ export const linksOficiais: LinkOficial[] = [
     externo: true,
     verificadoEm: '2026-10-21',
   },
-  // Pendente: URL do pagamento da taxa da prova prática ainda não informada.
   {
     id: 'detran_taxa_prova',
-    label: 'Pagar taxa da prova prática',
-    destino: 'Detran-SP — Taxas',
-    url: 'https://www.detran.sp.gov.br/',
+    label: 'Agendar prova prática e consultar pagamento',
+    destino: 'Detran-SP — Agendar ou cancelar exame prático',
+    url: 'https://www.detran.sp.gov.br/detransp/pb/servico/habilitacao/agendar_exame_pratico_de_direcao_veicular?id=carta_de_servico_agendar_exame_pratico_de_direcao_veicular',
     externo: true,
-    disabled: true,
+    verificadoEm: '2026-10-22',
   },
 ];
 

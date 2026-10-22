@@ -66,30 +66,30 @@ export const passos: Passo[] = [
   },
   {
     numero: 3,
-    titulo: 'Prova teórica do Detran',
-    descricao:
-      'Com a biometria feita, agende a prova teórica no site do Detran-SP. São 30 questões de múltipla escolha — precisa acertar pelo menos 21.',
-    botoes: [externo('detran_prova_teorica', ['cta-default'])],
-  },
-  {
-    numero: 4,
     titulo: 'Exame psicológico',
     descricao:
       'Avaliação psicológica feita em clínica credenciada pelo Detran-SP. É um dos requisitos para liberar as aulas práticas.',
     botoes: [],
   },
   {
-    numero: 5,
+    numero: 4,
     titulo: 'Exame médico',
     descricao:
-      'Avaliação da visão, audição e saúde geral, realizada em clínica credenciada. Em São Paulo, o exame toxicológico também é obrigatório para a primeira habilitação nas categorias A e B em processos iniciados a partir de 17/06/2026, além das exigências para as categorias C, D e E',
+      'Avaliação da visão, audição e saúde geral em clínica credenciada. Há também exigência de toxicológico na primeira habilitação A e B em SP, para processos iniciados desde 17/06/2026. Faça-o em laboratório credenciado pela Senatran; ele não precisa ocorrer junto do exame médico. Consulte o prazo de validade e o momento adequado no serviço oficial.',
     botoes: [],
+  },
+  {
+    numero: 5,
+    titulo: 'Prova teórica do Detran',
+    descricao:
+      'Com a biometria e os exames médico e psicológico concluídos, agende a prova teórica no site do Detran-SP. São 30 questões de múltipla escolha — precisa acertar pelo menos 21.',
+    botoes: [externo('detran_prova_teorica', ['cta-default'])],
   },
   {
     numero: 6,
     titulo: 'Aulas práticas com a Helena',
     descricao:
-      'Com os exames aprovados, você está liberado para dirigir. Você define quantas aulas quer fazer. O carro é da Helena (com duplo comando), e o ritmo é o seu — inclusive se você tem medo de dirigir. As aulas acontecem em Sumaré/SP e região: rua de verdade, trânsito de verdade.',
+      'Com os exames aprovados, você está liberado para dirigir. Para a primeira habilitação B, são exigidas pelo menos 2 horas de aulas práticas; você combina aulas adicionais conforme a necessidade. O carro é da Helena (com duplo comando), e o ritmo é o seu — inclusive se você tem medo de dirigir. As aulas acontecem em Sumaré/SP e região: rua de verdade, trânsito de verdade.',
     destaque: 'Parabéns! Você já pode fazer suas aulas práticas.',
     botoes: [wpp()],
   },
@@ -106,7 +106,7 @@ export const passos: Passo[] = [
     numero: 8,
     titulo: 'Aprovação e emissão da CNH',
     descricao:
-      'Aprovado na prática, o Detran emite a sua Permissão para Dirigir (PPD) — válida por 12 meses. Depois desse período, ela vira a CNH definitiva automaticamente. A emissão da CNH física tem taxa própria.',
+      'Aprovado na prática, o Detran emite a sua Permissão para Dirigir (PPD) — válida por 12 meses. Depois desse período, solicite a CNH definitiva, desde que cumpra os requisitos legais do período de permissão. A emissão da CNH física tem taxa própria.',
     botoes: [],
   },
   {

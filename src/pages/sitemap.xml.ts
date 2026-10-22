@@ -10,14 +10,14 @@ const rotas: { path: string; priority: number }[] = [
 ];
 
 export const GET = () => {
-  const hoje = new Date().toISOString().slice(0, 10);
+  const atualizadoEm = site.atualizadoEm;
   const body = `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 ${rotas
   .map(
     (r) => `  <url>
     <loc>${site.url}${r.path}</loc>
-    <lastmod>${hoje}</lastmod>
+    <lastmod>${atualizadoEm}</lastmod>
     <changefreq>${r.path === '/' ? 'weekly' : 'monthly'}</changefreq>
     <priority>${r.priority}</priority>
   </url>`

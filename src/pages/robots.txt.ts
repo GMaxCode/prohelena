@@ -1,10 +1,12 @@
 // src/pages/robots.txt.ts
 // Gera /robots.txt no build (Astro endpoint estático).
+import { site } from '../data/site';
+
 export const GET = () => {
   const body = `User-agent: *
 Allow: /
 
-Sitemap: https://helenadantas.com.br/sitemap-index.xml
+Sitemap: ${site.url}/sitemap.xml
 `;
   return new Response(body, {
     status: 200,

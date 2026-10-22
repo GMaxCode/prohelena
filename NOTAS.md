@@ -35,8 +35,7 @@ src/
 ├── pages/          Rotas (home, guia, política, 404, robots.txt, sitemap.xml)
 └── assets/photos/  Fotos otimizadas via <Image>
 public/
-├── photos/         Poster do hero + og-image (geradas por optimize-photos.mjs)
-├── videos/         Hero.mp4
+├── photos/         Imagem OG (gerada por optimize-photos.mjs)
 └── favicon.svg
 scripts/            Otimização de fotos + check-links
 ```
