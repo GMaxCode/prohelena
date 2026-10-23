@@ -33,6 +33,10 @@ export const site = {
   validade: 'Válido para o estado de São Paulo',
   /** Email de contato (LGPD). Sem formulário, então é só um mailto. */
   emailContato: 'contato@helenadantas.com.br',
+  /** Instagram oficial (@ sem o @). Trocar aqui muda todos os botões do site. */
+  instagram: 'helenadantas72',
+  /** Link completo do Instagram. */
+  instagramLink: 'https://instagram.com/helenadantas72',
   /** Tags de cidades-irmãs para SEO local (H2 "cidades atendidas"). */
   cidadesIrmasLabel: 'Hortolândia, Nova Odessa, Paulínia e Americana',
 } as const;
